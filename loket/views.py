@@ -5,8 +5,8 @@ import numpy as np
 moneys = [20, 20, 50, 5, 5, 100]
 n = len(moneys)
 def index(request):
-    ticket_price = request.GET.get('ticket_price')
-    cash = request.GET.get('cash')
+    ticket_price = request.GET.get('ticket_price') or 0
+    cash = request.GET.get('cash') or 0
     changes = isSubsetSum(ticket_price, cash)
     if(ticket_price and cash):
         return render(request, "loket.html",
