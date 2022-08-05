@@ -23,5 +23,5 @@ def index(request):
 def isChangeReady(ticket_price, cash):
     sum = int(cash) - int(ticket_price)
     arr = np.array(moneys)
-    changes = -np.sort(-arr)
-    print(changes)
+    changes = (np.cumsum(arr)<=5).argmin()
+    return arr

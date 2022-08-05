@@ -1,13 +1,10 @@
-
-
-# Create your views here.
 from django.http import HttpResponse
-
+import numpy as np
 
 def index(request):
     if(request.GET.get('number') ):
         fibo_numbers =  fibonacci(int(request.GET.get('number')))
-        return HttpResponse(fibo_numbers, content_type="application/json")
+        return HttpResponse(fibo_numbers)
     else:
         return HttpResponse('Masukan parameter number pada url (contoh: http://127.0.0.1:8000/fibonacci/?number=8)')
 def fibonacci(value):
@@ -16,9 +13,9 @@ def fibonacci(value):
     n1 = 0
     n2 = 1
     while count < value:
-        fibo_number.append(n1)
+        fibo_number.append(str(n1)+",")
         last_number = n1 + n2
         n1 = n2
         n2 = last_number
         count += 1
-    return fibo_number
+    return np.array(fibo_number)
