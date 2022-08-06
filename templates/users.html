@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+    <section>
+        <div class="container">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUser">
+                Add User
+            </button>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Username</th>
+                        <th scope="col">First</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <th>{{user.username}}</th>
+                        <td>{{user.first_name}}</td>
+                        <td>{{user.last_name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>
+                            <button type="button" data-id="{{user.id}}" class="edit-btn btn btn-primary"
+                                data-bs-toggle="modal" data-bs-target="#edituser">
+                                Edit
+                            </button>
+                            <button data-id="{{user.id}}" class="delete-btn btn btn-primary">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- Button trigger modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="edituser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" placeholder="Username">
+                        <label for="floatingInput">Username</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="email" placeholder="name@example.com">
+                        <label for="floatingInput">Email address</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="fn" placeholder="First Name">
+                        <label for="floatingInput">First name</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="ln" placeholder="Last Name">
+                        <label for="floatingInput">Last name</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updateRecord">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- add user  -->
+    <div class="modal fade" id="addUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/users/add/" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="hidden" id="userid">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="username" placeholder="Username">
+                            <label for="floatingInput" required>Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" name="email" placeholder="name@example.com">
+                            <label for="floatingInput" required>Email address</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="text" class="form-control" name="first_name" placeholder="First Name">
+                            <label for="floatingInput">First name</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="text" class="form-control" name="last_name" placeholder="Last Name">
+                            <label for="floatingInput">Last name</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="createUser">Create User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+            $('.edit-btn').click(function () {
+                var id = this.getAttribute('data-id')
+                $.get(`/users/${id}`, function (data, status) {
+                    var user = data.user[0];
+                    $('#userid').val(user.id)
+                    $('#username').val(user.username)
+                    $('#email').val(user.email)
+                    $('#fn').val(user.first_name)
+                    $('#ln').val(user.last_name)
+                });
+            })
+
+            $('.delete-btn').click(function () {
+                var id = this.getAttribute('data-id')
+                $.post(`/users/delete/${id}/`, function (data, status) {
+                    console.log(data);
+                })
+            })
+
+            $('#updateRecord').click(function () {
+                var id = $('#userid').val()
+                var data = {
+                    username: $('#username').val(),
+                    email: $('#email').val(),
+                    first_name: $('#fn').val(),
+                    last_name: $('#ln').val()
+                }
+                $.post(`/users/update/${id}/`, data, function (data, status) {
+                    window.location.href = '/users'
+                })
+            })
+        });
+    </script>
+</body>
+
+</html>
