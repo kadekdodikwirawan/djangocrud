@@ -7,14 +7,15 @@ n = len(moneys)
 def index(request):
     ticket_price = request.GET.get('ticket_price') or 0
     cash = request.GET.get('cash') or 0
-    changes = isSubsetSum(ticket_price, cash)
+    is_changes = isSubsetSum(ticket_price, cash)
     if(ticket_price and cash):
         return render(request, "loket.html",
         {
             'cash': cash,
             'ticket_price': ticket_price,
+            'sum': int(cash)-int(ticket_price),
             'moneys': moneys,
-            'changes': changes
+            'is_changes': is_changes
         }
         )
     else:

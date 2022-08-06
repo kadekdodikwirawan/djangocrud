@@ -9,9 +9,37 @@
 </head>
 
 <body>
-    <p>
-        {{changes}}
+    <h1>{{is_changes}}</h1>
+    <p id="changes">
     </p>
+    <script>
+        var moneys = "{{ moneys|escapejs }}".replace(/\[|\]/g, '');
+        var sum = "{{sum}}"
+        var moneys_arr = moneys.split(',').map(function (item) {
+            return parseInt(item);
+        });
+        function getSubsets(array, sum) {
+            function fork(i = 0, s = 0, t = []) {
+                if (s === sum) {
+                    result.push(t);
+                    return;
+                }
+                if (i === array.length) {
+                    return;
+                }
+                if (s + array[i] <= sum) {
+                    fork(i + 1, s + array[i], t.concat(array[i]));
+                }
+                fork(i + 1, s, t);
+            }
+            var result = [];
+            fork();
+            console.log(result);
+            return result;
+        }
+        var changes = getSubsets(moneys_arr, parseInt(sum))
+        document.getElementById('changes').innerHTML = changes[0] || 0
+    </script>
 </body>
 
 </html>
