@@ -10,8 +10,16 @@
 
 <body>
     <h1>{{is_changes}}</h1>
-    <p id="changes">
-    </p>
+    <ul id="changes">
+    </ul>
+    <ul>
+        <h4>Python function</h4>
+        {% for change in changes %}
+        <li>
+            {{change}}
+        </li>
+        {% endfor %}
+    </ul>
     <script>
         var moneys = "{{ moneys|escapejs }}".replace(/\[|\]/g, '');
         var sum = "{{sum}}"
@@ -28,17 +36,20 @@
                     return;
                 }
                 if (s + array[i] <= sum) {
+                    // console.log(t);
                     fork(i + 1, s + array[i], t.concat(array[i]));
                 }
                 fork(i + 1, s, t);
             }
             var result = [];
             fork();
-            console.log(result);
             return result;
         }
         var changes = getSubsets(moneys_arr, parseInt(sum))
-        document.getElementById('changes').innerHTML = changes[0] || 0
+        var li = changes.map((change) => {
+            return `<li>${change}</li>`
+        })
+        document.getElementById('changes').innerHTML = `<h4>Javascript Function:</h4> ${li}`
     </script>
 </body>
 

@@ -1,3 +1,5 @@
+from itertools import chain
+from unittest import result
 from django.shortcuts import render
 from django.http import HttpResponse
 import numpy as np
@@ -8,6 +10,7 @@ def index(request):
     ticket_price = request.GET.get('ticket_price') or 0
     cash = request.GET.get('cash') or 0
     is_changes = isSubsetSum(ticket_price, cash)
+    changes = getSubset(ticket_price, cash)
     if(ticket_price and cash):
         return render(request, "loket.html",
         {
@@ -15,7 +18,8 @@ def index(request):
             'ticket_price': ticket_price,
             'sum': int(cash)-int(ticket_price),
             'moneys': moneys,
-            'is_changes': is_changes
+            'is_changes': is_changes,
+            'changes': changes
         }
         )
     else:
@@ -36,3 +40,18 @@ def isSubsetSum(ticket_price, cash):
                     subset[i][j] = (subset[i-1][j] or subset[i - 1][j-moneys[i-1]])
     if subset[n][sum] : return 'Ada kembalian'
     else: return 'Tidak ada kembalian'
+
+def getSubset(ticket_price, cash):
+    sum_all = int(cash) - int(ticket_price)
+    result = []
+    def fork(i= 0, s= 0, t = []):
+        if (s == sum_all ):
+            result.append(t)
+            return
+        if(i == len(moneys)):
+            return
+        if(s + moneys[i] <= sum_all):
+            fork(i+1, s+moneys[i], [t, moneys[i]])
+        fork(i+1, s, t)
+    fork()
+    return result
