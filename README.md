@@ -1,5 +1,9 @@
 # djangocrud
 
+# Study case
+
+![Alt text](https://github.com/kadekdodikwirawan/djangocrud/blob/master/study_case.png?raw=true "Study Case")
+
 1. Fungsi loket cek kembalian http://127.0.0.1:8000/loket?ticket_price=25&cash=100
 2. Fungsi fibonacci http://127.0.0.1:8000/fibonacci/?number=8
 3. user login http://127.0.0.1:8000/admin (
